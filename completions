@@ -1,0 +1,32 @@
+_git_branch_list () {
+    gb | sed -e 's/$GIT_BRANCH_PREFIX\///'
+}
+
+_git_branch_completions () {
+    if [ "${#COMP_WORDS[@]}" != "2" ]; then
+        return
+    fi
+    COMPREPLY=($(compgen -W "$( _gc_list )" "${COMP_WORDS[1]}"))
+}
+
+_git_branch_completions_zsh () {
+    compadd `_git_branch_list`
+}
+
+
+# TODO: fix completion logic to work for both zsh and bash
+if type complete >/dev/null 2>/dev/null; then
+    # bash
+    complete -F _git_branch_completions gc
+    complete -F _git_branch_completions gl
+    complete -F _git_branch_completions gbd
+else if type compdef >/dev/null 2>/dev/null; then
+    # zsh
+    compdef _git_branch_completions_zsh gc
+    compdef _git_branch_completions_zsh gl
+    compdef _git_branch_completions_zsh gbd
+fi; fi
+
+compdef _git_branch_completions_zsh gc
+compdef _git_branch_completions_zsh gl
+compdef _git_branch_completions_zsh gbd
